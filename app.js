@@ -21,7 +21,9 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-
+if (app.get('env') === 'development') {
+  app.locals.pretty = true;
+}
 // 몽고DB 연결
 mongoose.connect('mongodb://hyein:123123@ds139847.mlab.com:39847/coconut');
 mongoose.connection.on('error', console.log);
@@ -68,7 +70,15 @@ app.use(function(req, res, next) {
   err.status = 404;
   next(err);
 });
-
+if (app.get('env') === 'development') {
+  app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+      message: err.message,
+      error: err
+    });
+  });
+}
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
