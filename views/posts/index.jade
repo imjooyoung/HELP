@@ -1,0 +1,21 @@
+extends ../layout
+
+block content
+  h3 마음에 드는 숙소를 찾아보세요
+  
+  table.table.table-bordered
+    thead
+      tr
+        th 작성자
+        th 제목
+        th 주소
+        th 요금
+    tbody
+      each post in posts
+        tr
+          td 
+            a(href='/users/#{post.user}')= post.userName
+          td
+            a(href='/posts/#{post.id}')= post.title
+          td= post.address
+          td= post.price

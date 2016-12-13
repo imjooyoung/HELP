@@ -1,0 +1,22 @@
+{
+  "name": "airbnb",
+  "description": "",
+  "main": "",
+  "authors": [
+    "60152180 <donkey3353@naver.com>"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "font-awesome": "fontawesome#^4.7.0",
+    "bourbon": "^4.2.7"
+  }
+}
