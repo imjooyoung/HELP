@@ -15,7 +15,7 @@ var posts = require('./routes/posts');
 var auth = require('./routes/auth');
 
 var mongoose   = require('mongoose');
-
+var routeAuth = require('./routes/auth');
 var app = express();
 
 // view engine setup
@@ -24,6 +24,7 @@ app.set('view engine', 'jade');
 if (app.get('env') === 'development') {
   app.locals.pretty = true;
 }
+app.locals.moment = require('moment');
 // 몽고DB 연결
 mongoose.connect('mongodb://hyein:123123@ds139847.mlab.com:39847/coconut');
 mongoose.connection.on('error', console.log);
@@ -34,7 +35,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(methodOverride('_method', {methods: ['POST', 'GET']}));
 
 app.use(session({
   resave: true,
@@ -64,12 +65,20 @@ app.use('/users', users);
 app.use('/posts', posts);
 auth(app, passport);
 
+//app.use('/hosting', hosting);
+routeAuth(app, passport);
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
+
+// error handlers
+
+// development error handler
+// will print stacktrace
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
@@ -79,15 +88,16 @@ if (app.get('env') === 'development') {
     });
   });
 }
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
+// production error handler
+// no stacktraces leaked to user
+app.use(function(err, req, res, next) {
   res.status(err.status || 500);
-  res.render('error');
+  res.render('error', {
+    message: err.message,
+    error: {}
+  });
 });
+
 
 module.exports = app;
